@@ -1,1 +1,1 @@
-print('conflict2')
+print('Version from main branch')
