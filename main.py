@@ -17,7 +17,7 @@ def factorial(number):
     else:
         return (number*factorial(number-1))
 
-number = int(input("Введите число: "))
+number = 5
 if number < 0:
     print("Введите неотрицательное число\n")
 elif number == 0:
@@ -35,4 +35,19 @@ for numbers in range(2, 101):
             break
     if is_prime:
         print(numbers, end=" ")
-print("\n")
+print("\n\n")
+
+
+print("Задание 1 (повышенная сложность) Сортировка списка пузырьком\n")
+list = [15, 35, 78, 1, 2, 64, 34, 25, 12, 22, 11, 90]
+n = len(list)
+print(list, end="\n")
+for i in range(n):
+    for j in range(n-1):
+        if list[j] > list[j+1]:
+            buff = list[j]
+            list[j] = list[j+1]
+            list[j+1] = buff
+print(list, "\n\n")
+
+
