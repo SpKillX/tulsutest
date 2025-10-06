@@ -24,3 +24,15 @@ elif number == 0:
     print("Факториал числа 0 равен ", 1, "\n")
 else:
     print(f"Факториал числа {number} равен {factorial(number)}\n")
+
+
+print("Задание 5 Список простых чисел до 100\n")
+for numbers in range(2, 101):
+    is_prime = True
+    for i in range(2, int(numbers**0.5)+1):
+        if numbers % i == 0:
+            is_prime = False
+            break
+    if is_prime:
+        print(numbers, end=" ")
+print("\n")
