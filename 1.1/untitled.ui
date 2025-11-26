@@ -11,15 +11,15 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Задание 1</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="hello_button">
     <property name="geometry">
      <rect>
       <x>280</x>
-      <y>210</y>
-      <width>231</width>
+      <y>200</y>
+      <width>281</width>
       <height>91</height>
      </rect>
     </property>

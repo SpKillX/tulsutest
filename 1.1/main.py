@@ -6,7 +6,7 @@ class MyWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('untitled.ui', self)
-        self.pushButton.clicked.connect(self.show_message)
+        self.hello_button.clicked.connect(self.show_message)
 
     def show_message(self):
         QtWidgets.QMessageBox.information(self, "Привет", "Привет")
