@@ -11,8 +11,8 @@ class MyWindow(QtWidgets.QMainWindow):
     def show_message(self):
         QtWidgets.QMessageBox.information(self, "Привет", "Привет")
 
-if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    window = MyWindow()
-    window.show()
-    sys.exit(app.exec_())
+
+app = QtWidgets.QApplication(sys.argv)
+window = MyWindow()
+window.show()
+sys.exit(app.exec_())

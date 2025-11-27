@@ -7,8 +7,8 @@ class MyWindow(QtWidgets.QMainWindow):
         super().__init__()
         uic.loadUi('untitled.ui', self)
 
-if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    window = MyWindow()
-    window.show()
-    sys.exit(app.exec_())
+
+app = QtWidgets.QApplication(sys.argv)
+window = MyWindow()
+window.show()
+sys.exit(app.exec_())

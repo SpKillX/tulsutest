@@ -36,8 +36,8 @@ class MyWindow(QtWidgets.QMainWindow):
             self.result.setText("Ошибка ввода: введите числа")
 
 
-if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    window = MyWindow()
-    window.show()
-    sys.exit(app.exec_())
+
+app = QtWidgets.QApplication(sys.argv)
+window = MyWindow()
+window.show()
+sys.exit(app.exec_())

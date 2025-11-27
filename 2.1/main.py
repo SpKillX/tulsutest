@@ -65,8 +65,8 @@ class MyWindow(QtWidgets.QMainWindow):
             print(f"Ошибка при обновлении списка: {e}")
 
 
-if __name__ == "__main__":
-    app = QtWidgets.QApplication(sys.argv)
-    window = MyWindow()
-    window.show()
-    sys.exit(app.exec_())
+
+app = QtWidgets.QApplication(sys.argv)
+window = MyWindow()
+window.show()
+sys.exit(app.exec_())
