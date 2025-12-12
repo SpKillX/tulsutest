@@ -1,14 +1,9 @@
-import sys
-import os
-from PyQt5 import QtWidgets, uic
+from flask import Flask, render_template
 
-class MyWindow(QtWidgets.QMainWindow):
-    def __init__(self):
-        super().__init__()
-        uic.loadUi('untitled.ui', self)
+app = Flask(__name__)
 
+@app.route("/")
+def home():
+    return render_template("index.html")
 
-app = QtWidgets.QApplication(sys.argv)
-window = MyWindow()
-window.show()
-sys.exit(app.exec_())
+app.run()
