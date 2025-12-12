@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 import os
 
 app = Flask(__name__)
@@ -23,6 +23,6 @@ def upload():
         file.save(os.path.join(UPLOAD_FOLDER, file.filename))
         return f'Файл "{file.filename}" загружен <a href="/upload">Ещё файл</a>'
 
-    return render_template("index.html")
+    return redirect(url_for('home'))
 
 app.run()

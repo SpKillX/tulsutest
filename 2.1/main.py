@@ -28,6 +28,24 @@ def add():
 
     return render_template('add.html')
 
+@app.route("/edit/<int:id>", methods=['GET', 'POST'])
+def edit(id):
+    conn = get_db_connection()
+
+    if request.method == 'POST':
+        title = request.form['title']
+        description = request.form['description']
+
+        conn.execute('UPDATE tasks SET title = ?, description = ? WHERE id = ?',
+                     (title, description, id))
+        conn.commit()
+        conn.close()
+        return redirect(url_for('index'))
+
+    task = conn.execute('SELECT * FROM tasks WHERE id = ?', (id,)).fetchone()
+    conn.close()
+    return render_template('edit.html', task=task)
+
 @app.route("/delete/<int:id>")
 def delete(id):
     conn = get_db_connection()
