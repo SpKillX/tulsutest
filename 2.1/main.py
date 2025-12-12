@@ -1,72 +1,41 @@
-import sys
-import os
-from PyQt5 import QtWidgets, uic
-from PyQt5.QtCore import Qt
+from flask import Flask, render_template, request, redirect, url_for
+from database import init_db, get_db_connection
+
+app = Flask(__name__)
+
+init_db()
+
+@app.route("/")
+def index():
+    conn = get_db_connection()
+    tasks = conn.execute('SELECT * FROM tasks').fetchall()
+    conn.close()
+    return render_template('index.html', tasks=tasks)
 
 
-class MyWindow(QtWidgets.QMainWindow):
-    def __init__(self):
-        super().__init__()
-        uic.loadUi('untitled.ui', self)
+@app.route("/add", methods=['GET', 'POST'])
+def add():
+    if request.method == 'POST':
+        title = request.form['title']
+        description = request.form['description']
 
-        self.save_button.clicked.connect(self.save_note)
-        self.listWidget.itemClicked.connect(self.load_note)
+        conn = get_db_connection()
+        conn.execute('INSERT INTO tasks (title, description) VALUES (?, ?)',
+                     (title, description))
+        conn.commit()
+        conn.close()
+        return redirect(url_for('index'))
 
-        self.notes_dir = "notes"
-        if not os.path.exists(self.notes_dir):
-            os.makedirs(self.notes_dir)
+    return render_template('add.html')
 
-        self.update_notes_list()
-
-    def save_note(self):
-        text = self.note_field.toPlainText().strip()
-
-        if not text:
-            QtWidgets.QMessageBox.warning(self, "Ошибка", "Заметка не может быть пустой!")
-            return
-
-        note_name = text[:20].replace('\n', ' ').replace('/', '_').replace('\\', '_')
-
-        filename = f"{note_name}.txt"
-        filepath = os.path.join(self.notes_dir, filename)
-
-        try:
-            with open(filepath, "w", encoding="utf-8") as f:
-                f.write(text)
-
-            self.update_notes_list()
-            QtWidgets.QMessageBox.information(self, "Успех", f"Заметка сохранена как: {filename}")
-
-        except Exception as e:
-            QtWidgets.QMessageBox.critical(self, "Ошибка", f"Не удалось сохранить заметку: {str(e)}")
-
-    def load_note(self, item):
-        filename = item.text()
-        filepath = os.path.join(self.notes_dir, filename)
-
-        try:
-            with open(filepath, "r", encoding="utf-8") as f:
-                text = f.read()
-            self.note_field.setPlainText(text)
-        except Exception as e:
-            QtWidgets.QMessageBox.critical(self, "Ошибка", f"Не удалось загрузить заметку: {str(e)}")
-
-    def update_notes_list(self):
-        self.listWidget.clear()
-
-        try:
-            files = [f for f in os.listdir(self.notes_dir) if f.endswith('.txt')]
-            files.sort()
-
-            for file in files:
-                self.listWidget.addItem(file)
-
-        except Exception as e:
-            print(f"Ошибка при обновлении списка: {e}")
+@app.route("/delete/<int:id>")
+def delete(id):
+    conn = get_db_connection()
+    conn.execute('DELETE FROM tasks WHERE id = ?', (id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('index'))
 
 
-
-app = QtWidgets.QApplication(sys.argv)
-window = MyWindow()
-window.show()
-sys.exit(app.exec_())
+if __name__ == '__main__':
+    app.run(debug=True)
