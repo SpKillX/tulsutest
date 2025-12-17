@@ -1,9 +1,21 @@
-from flask import Flask, render_template
+import sqlite3
 
-app = Flask(__name__)
+def select_data_from_table():
+    conn = sqlite3.connect('test.db')
+    cursor = conn.cursor()
 
-@app.route("/")
-def home():
-    return render_template("index.html")
+    cursor.execute('SELECT * FROM test')
+    rows = cursor.fetchall()
 
-app.run()
+    if rows:
+        print("Список:")
+        for row in rows:
+            print(f"ID: {row[0]}, Текст: {row[1]}, Число: {row[2]}")
+    else:
+        print("В таблице нет данных.")
+
+    conn.close()
+
+conn = sqlite3.connect('test.db')
+cursor = conn.cursor()
+select_data_from_table()
