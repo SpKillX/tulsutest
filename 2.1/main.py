@@ -1,57 +1,71 @@
-from flask import Flask, render_template, request, redirect, url_for
-from database import init_db, get_db_connection
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
+from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 
-app = Flask(__name__)
+Base = declarative_base()
 
-init_db()
+class Client(Base):
+    __tablename__ = 'clients'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), nullable=False)
+    orders = relationship('Order', back_populates='client')
 
-@app.route("/")
-def index():
-    conn = get_db_connection()
-    tasks = conn.execute('SELECT * FROM tasks').fetchall()
-    conn.close()
-    return render_template('index.html', tasks=tasks)
+class Order(Base):
+    __tablename__ = 'orders'
+    id = Column(Integer, primary_key=True)
+    product = Column(String(100), nullable=False)
+    quantity = Column(Integer)
+    client_id = Column(Integer, ForeignKey('clients.id'))
+    client = relationship('Client', back_populates='orders')
 
+engine = create_engine('sqlite:///simple_shop.db')
+Base.metadata.create_all(engine)
 
-@app.route("/add", methods=['GET', 'POST'])
-def add():
-    if request.method == 'POST':
-        title = request.form['title']
-        description = request.form['description']
+Session = sessionmaker(bind=engine)
+session = Session()
 
-        conn = get_db_connection()
-        conn.execute('INSERT INTO tasks (title, description) VALUES (?, ?)',
-                     (title, description))
-        conn.commit()
-        conn.close()
-        return redirect(url_for('index'))
+clients_data = [
+    {'name': 'qwerty'},
+    {'name': 'asdfgh'},
+    {'name': 'zxcvbn'},
+    {'name': 'poiuyt'},
+    {'name': 'lkjhgf'}
+]
 
-    return render_template('add.html')
+clients = []
+for client_info in clients_data:
+    client = Client(name=client_info['name'])
+    session.add(client)
+    clients.append(client)
 
-@app.route("/edit/<int:id>", methods=['GET', 'POST'])
-def edit(id):
-    conn = get_db_connection()
+session.flush()
 
-    if request.method == 'POST':
-        title = request.form['title']
-        description = request.form['description']
+orders_data = [
+    {'product': 'item_abc', 'quantity': 3, 'client_id': clients[0].id},
+    {'product': 'item_xyz', 'quantity': 5, 'client_id': clients[0].id},
+    {'product': 'item_test', 'quantity': 2, 'client_id': clients[1].id},
+    {'product': 'item_sample', 'quantity': 7, 'client_id': clients[2].id},
+    {'product': 'item_demo', 'quantity': 1, 'client_id': clients[2].id},
+    {'product': 'item_temp', 'quantity': 4, 'client_id': clients[3].id},
+    {'product': 'item_data', 'quantity': 6, 'client_id': clients[4].id}
+]
 
-        conn.execute('UPDATE tasks SET title = ?, description = ? WHERE id = ?',
-                     (title, description, id))
-        conn.commit()
-        conn.close()
-        return redirect(url_for('index'))
+for order_info in orders_data:
+    order = Order(
+        product=order_info['product'],
+        quantity=order_info['quantity'],
+        client_id=order_info['client_id']
+    )
+    session.add(order)
 
-    task = conn.execute('SELECT * FROM tasks WHERE id = ?', (id,)).fetchone()
-    conn.close()
-    return render_template('edit.html', task=task)
+session.commit()
 
-@app.route("/delete/<int:id>")
-def delete(id):
-    conn = get_db_connection()
-    conn.execute('DELETE FROM tasks WHERE id = ?', (id,))
-    conn.commit()
-    conn.close()
-    return redirect(url_for('index'))
+all_clients = session.query(Client).all()
 
-app.run()
+for client in all_clients:
+    print(f"\nКлиент: {client.name}")
+    if client.orders:
+        for order in client.orders:
+            print(f"Заказ: {order.product} (количество: {order.quantity})")
+    else:
+        print("  Нет заказов")
+session.close()

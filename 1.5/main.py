@@ -18,5 +18,4 @@ def delete_record_by_id(record_id):
     conn.close()
 
 
-if __name__ == "__main__":
-    delete_record_by_id(1)
+delete_record_by_id(1)
