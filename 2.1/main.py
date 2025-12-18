@@ -17,7 +17,7 @@ class Order(Base):
     client_id = Column(Integer, ForeignKey('clients.id'))
     client = relationship('Client', back_populates='orders')
 
-engine = create_engine('sqlite:///simple_shop.db')
+engine = create_engine('sqlite:///shop.db')
 Base.metadata.create_all(engine)
 
 Session = sessionmaker(bind=engine)
