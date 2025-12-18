@@ -31,7 +31,7 @@ def create_index():
     conn.close()
 
 
-def search_without_index():
+def search():
     conn = sqlite3.connect('indexed.db')
     cursor = conn.cursor()
 
@@ -40,24 +40,13 @@ def search_without_index():
     rows = cursor.fetchall()
     end_time = time.time()
 
-    print(f"Без индекса: найдено {len(rows)} записей за {end_time - start_time:.4f} сек.")
+    print(f"найдено {len(rows)} записей за {end_time - start_time:.4f} сек.")
     conn.close()
 
 
-def search_with_index():
-    conn = sqlite3.connect('indexed.db')
-    cursor = conn.cursor()
-
-    start_time = time.time()
-    cursor.execute('SELECT * FROM products WHERE category = ?', ('Категория 5',))
-    rows = cursor.fetchall()
-    end_time = time.time()
-
-    print(f"С индексом: найдено {len(rows)} записей за {end_time - start_time:.4f} сек.")
-    conn.close()
-
-
-create_table()
-search_without_index()
+#create_table()
+print("Без индекса", end="")
+search()
 create_index()
-search_with_index()
+print("С индексом", end="")
+search()
