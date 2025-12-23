@@ -16,4 +16,6 @@ def select_data_from_table():
 
     conn.close()
 
+conn = sqlite3.connect('test.db')
+cursor = conn.cursor()
 select_data_from_table()
